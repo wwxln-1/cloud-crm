@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title %}Delete{% endblock %}{% block crumb %}Delete{% endblock %}
+{% block content %}
+<div class="panel panel-pad form-card" style="max-width:480px">
+  <h6 class="text-danger"><i class="bi bi-exclamation-triangle"></i> Confirm delete</h6>
+  <p>Delete <strong>{{ object }}</strong>? This action cannot be undone.</p>
+  <form method="post">{% csrf_token %}
+    <div class="d-flex gap-2">
+      <button class="btn btn-danger">Delete</button>
+      <a href="{% url list_url %}" class="btn btn-ghost">Cancel</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

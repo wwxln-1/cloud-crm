@@ -1,0 +1,11 @@
+{% extends "base.html" %}{% load crud_extras %}
+{% block title %}{{ title }}{% endblock %}{% block crumb %}{{ title }}{% endblock %}
+{% block content %}
+<a href="{% url list_url %}" class="small">&larr; Back</a>
+<div class="page-head mt-2"><h1>{{ object }}</h1></div>
+<div class="panel panel-pad form-card">
+  <dl class="dl-rows">
+    {% for r in detail_rows %}<dt>{{ r.label }}</dt><dd>{{ object|attr:r.field|default:"—" }}</dd>{% endfor %}
+  </dl>
+</div>
+{% endblock %}

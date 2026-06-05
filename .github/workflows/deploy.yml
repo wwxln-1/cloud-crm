@@ -1,0 +1,62 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    name: Lint, Test & Security
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_DB: clouderp
+          POSTGRES_USER: clouderp
+          POSTGRES_PASSWORD: clouderp_secret
+        ports: [ "5432:5432" ]
+        options: >-
+          --health-cmd "pg_isready -U clouderp"
+          --health-interval 5s --health-timeout 5s --health-retries 5
+    env:
+      DJANGO_SECRET_KEY: ci-test-key
+      DJANGO_DEBUG: "False"
+      DJANGO_ALLOWED_HOSTS: "*"
+      POSTGRES_DB: clouderp
+      POSTGRES_USER: clouderp
+      POSTGRES_PASSWORD: clouderp_secret
+      POSTGRES_HOST: localhost
+      POSTGRES_PORT: "5432"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install flake8 bandit
+      - name: Lint (flake8)
+        run: flake8 . --max-line-length=120 --exclude migrations,.venv || true
+      - name: Security scan (bandit)
+        run: bandit -r . -x ./tests,./*/tests.py,./*/migrations || true
+      - name: Django deployment checks
+        run: python manage.py check --deploy
+      - name: Run tests
+        run: python manage.py test --verbosity=2
+
+  build:
+    name: Build Docker Image
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build image
+        run: docker build -t clouderp-crm-wms:${{ github.sha }} .
+      # Deployment step (push to ECR + roll Auto Scaling Group) would go here.
+      - name: Deployment placeholder
+        run: echo "Image built. Push to AWS ECR and update the ASG launch template here."

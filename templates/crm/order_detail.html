@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block title %}{{ object.reference }}{% endblock %}{% block crumb %}{{ object.reference }}{% endblock %}
+{% block content %}
+<a href="{% url 'crm:order_list' %}" class="small">&larr; Back to orders</a>
+<div class="page-head mt-2">
+  <span class="ph-icon"><i class="bi bi-cart3"></i></span>
+  <h1>{{ object.reference }}</h1>
+  <div class="spacer"></div>
+  <span class="pill pill-slate">{{ object.get_status_display }}</span>
+</div>
+
+<div class="row g-3">
+  <div class="col-lg-7">
+    <div class="panel panel-pad">
+      <h6>Line items</h6>
+      <table class="tbl">
+        <thead><tr><th>Product</th><th>Qty</th><th>Unit price</th><th class="text-end">Total</th></tr></thead>
+        <tbody>
+        {% for line in object.lines.all %}
+          <tr><td class="cell-strong">{{ line.product.name }}</td><td>{{ line.quantity }}</td>
+          <td>${{ line.unit_price }}</td><td class="text-end">${{ line.line_total }}</td></tr>
+        {% empty %}<tr><td colspan="4" class="text-muted">No items yet.</td></tr>{% endfor %}
+        </tbody>
+        <tfoot><tr><td colspan="3" class="text-end cell-strong">Order total</td>
+          <td class="text-end cell-strong">${{ object.total }}</td></tr></tfoot>
+      </table>
+    </div>
+  </div>
+  <div class="col-lg-5">
+    <div class="panel panel-pad mb-3">
+      <h6>Customer</h6>
+      <p class="mb-1 cell-strong">{{ object.customer.name }}</p>
+      <p class="text-muted small mb-0">{{ object.customer.company }} · {{ object.customer.email }}</p>
+    </div>
+    {% if can_write %}
+    <div class="panel panel-pad">
+      <h6>Add item</h6>
+      <form method="post" action="{% url 'crm:order_add_line' object.pk %}">{% csrf_token %}
+        {% for field in line_form %}
+          <div class="mb-2"><label class="form-label">{{ field.label }}</label>{{ field }}</div>
+        {% endfor %}
+        <button class="btn btn-primary btn-sm mt-1"><i class="bi bi-plus-lg"></i> Add line</button>
+      </form>
+    </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

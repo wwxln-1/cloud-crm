@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}{% block crumb %}Dashboard{% endblock %}
+{% block content %}
+<div class="page-head"><span class="ph-icon"><i class="bi bi-grid-1x2"></i></span>
+  <h1>Welcome, {{ user.get_full_name|default:user.username }}</h1></div>
+
+<div class="stat-grid">
+  {% if show_crm %}
+  <div class="stat"><div class="ic"><i class="bi bi-people"></i></div>
+    <div class="label">Customers</div><div class="value">{{ total_customers }}</div></div>
+  <div class="stat"><div class="ic"><i class="bi bi-cart3"></i></div>
+    <div class="label">Sales Orders</div><div class="value">{{ total_orders }}</div></div>
+  <div class="stat amber"><div class="ic"><i class="bi bi-cash-coin"></i></div>
+    <div class="label">Revenue</div><div class="value">${{ revenue|floatformat:0 }}</div></div>
+  <div class="stat slate"><div class="ic"><i class="bi bi-funnel"></i></div>
+    <div class="label">Open Leads</div><div class="value">{{ open_leads }}</div></div>
+  {% endif %}
+  <div class="stat slate"><div class="ic"><i class="bi bi-tags"></i></div>
+    <div class="label">Products</div><div class="value">{{ total_products }}</div></div>
+  {% if show_wms %}
+  <div class="stat"><div class="ic"><i class="bi bi-buildings"></i></div>
+    <div class="label">Warehouses</div><div class="value">{{ total_warehouses }}</div></div>
+  <div class="stat red"><div class="ic"><i class="bi bi-exclamation-triangle"></i></div>
+    <div class="label">Low Stock Items</div><div class="value">{{ low_stock }}</div></div>
+  {% endif %}
+</div>
+
+<div class="row g-3">
+  {% if show_crm %}
+  <div class="col-lg-7">
+    <div class="panel panel-pad">
+      <h6>Recent Sales Orders</h6>
+      <table class="tbl">
+        <thead><tr><th>Ref</th><th>Customer</th><th>Status</th><th class="text-end">Total</th></tr></thead>
+        <tbody>
+        {% for o in recent_orders %}
+          <tr><td class="cell-strong">{{ o.reference }}</td><td>{{ o.customer.name }}</td>
+          <td><span class="pill pill-slate">{{ o.get_status_display }}</span></td>
+          <td class="text-end">${{ o.total|floatformat:2 }}</td></tr>
+        {% empty %}<tr><td colspan="4" class="text-muted">No orders yet.</td></tr>{% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="col-lg-5">
+    <div class="panel panel-pad"><h6>Orders by status</h6><canvas id="statusChart" height="200"></canvas></div>
+  </div>
+  {% endif %}
+  {% if show_wms %}
+  <div class="col-lg-6">
+    <div class="panel panel-pad"><h6>Stock by warehouse</h6><canvas id="whChart" height="180"></canvas></div>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script>
+const teal='#0d9488', amber='#d97706', slate='#475569', green='#0f9d6b', red='#dc2626';
+{% if show_crm %}
+new Chart(document.getElementById('statusChart'),{type:'doughnut',
+ data:{labels:{{ status_labels|safe }},datasets:[{data:{{ status_values|safe }},
+ backgroundColor:[teal,amber,slate,green,red]}]},
+ options:{plugins:{legend:{position:'bottom'}},cutout:'62%'}});
+{% endif %}
+{% if show_wms %}
+new Chart(document.getElementById('whChart'),{type:'bar',
+ data:{labels:{{ wh_labels|safe }},datasets:[{label:'Units',data:{{ wh_values|safe }},
+ backgroundColor:teal,borderRadius:6}]},
+ options:{plugins:{legend:{display:false}},scales:{y:{beginAtZero:true}}}});
+{% endif %}
+</script>
+{% endblock %}
