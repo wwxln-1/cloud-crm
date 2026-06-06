@@ -23,7 +23,7 @@ jobs:
           --health-interval 5s --health-timeout 5s --health-retries 5
     env:
       DJANGO_SECRET_KEY: ci-test-key
-      DJANGO_DEBUG: "True"
+      DJANGO_DEBUG: "False"
       DJANGO_ALLOWED_HOSTS: "*"
       DJANGO_SECURE_SSL_REDIRECT: "False"
       POSTGRES_DB: clouderp
