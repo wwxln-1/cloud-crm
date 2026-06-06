@@ -43,7 +43,10 @@ jobs:
             echo ">>> Running migrations..."
             sudo docker compose exec -T web python manage.py migrate --noinput
 
+            echo ">>> Reload Nginx..."
+            sudo systemctl reload nginx
+
             echo ">>> Health check..."
-            curl -f --retry 5 --retry-delay 5 http://localhost:8000/health/ \
+            curl -f --retry 5 --retry-delay 5 http://localhost/health/ \
               && echo "Deploy successful!" \
               || (echo "Health check FAILED" && exit 1)
