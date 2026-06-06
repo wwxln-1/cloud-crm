@@ -40,7 +40,7 @@
       {% endif %}
 
       {% if nav.users or nav.admin_panel %}<div class="nav-section">System</div>{% endif %}
-      {% if nav.users %}<a class="nav-link" href="{% url 'accounts:user_list' %}"><i class="bi bi-shield-lock"></i> Users</a>{% endif %}
+      {% if nav.users %}<a class="nav-link" href="{% url 'accounts:user_list' %}"><i class="bi bi-shield-lock"></i> USERS</a>{% endif %}
       {% if nav.admin_panel %}<a class="nav-link" href="/admin/" target="_blank"><i class="bi bi-sliders"></i> Django Admin</a>{% endif %}
     </nav>
   </aside>
