@@ -13,7 +13,6 @@ def navigation(request):
             "products": user.in_roles(roles.PRODUCT_VIEW),
             "wms": user.in_roles(roles.WMS_VIEW),
             "users": user.in_roles(roles.USERS_VIEW),
-            "api": user.in_roles(roles.API_VIEW),
             "admin_panel": user.is_admin_role,
         }
     }

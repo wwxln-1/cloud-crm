@@ -25,6 +25,7 @@ CSRF_TRUSTED_ORIGINS = [o.strip() for o in os.getenv("DJANGO_CSRF_TRUSTED_ORIGIN
 
 # --- Applications ---------------------------------------------------------
 INSTALLED_APPS = [
+    "jazzmin",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -145,6 +146,78 @@ STORAGES = {
 }
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+# --- Jazzmin (Django Admin UI) --------------------------------------------
+JAZZMIN_SETTINGS = {
+    "site_title": "CloudERP Admin",
+    "site_header": "CloudERP",
+    "site_brand": "CloudERP",
+    "welcome_sign": "Welcome to CloudERP Administration",
+    "copyright": "CloudERP · ERP · CRM · WMS",
+    "search_model": ["accounts.User", "crm.Customer", "erp.Product"],
+    "topmenu_links": [
+        {"name": "Site", "url": "/", "new_window": True},
+        {"app": "crm"},
+        {"app": "erp"},
+        {"app": "wms"},
+    ],
+    "usermenu_links": [
+        {"model": "accounts.user"},
+    ],
+    "show_sidebar": True,
+    "navigation_expanded": True,
+    "order_with_respect_to": ["accounts", "crm", "erp", "wms"],
+    "icons": {
+        "accounts": "fas fa-user-shield",
+        "accounts.user": "fas fa-user-circle",
+        "auth.Group": "fas fa-users",
+        "crm": "fas fa-handshake",
+        "crm.customer": "fas fa-address-card",
+        "crm.lead": "fas fa-filter",
+        "crm.salesorder": "fas fa-shopping-cart",
+        "crm.salesorderline": "fas fa-list-ul",
+        "erp": "fas fa-industry",
+        "erp.product": "fas fa-box-open",
+        "erp.category": "fas fa-sitemap",
+        "erp.supplier": "fas fa-truck",
+        "erp.employee": "fas fa-id-badge",
+        "erp.purchaseorder": "fas fa-file-invoice-dollar",
+        "wms": "fas fa-warehouse",
+        "wms.warehouse": "fas fa-building",
+        "wms.inventoryitem": "fas fa-cubes",
+        "wms.stockmovement": "fas fa-exchange-alt",
+        "wms.shipment": "fas fa-shipping-fast",
+    },
+    "default_icon_parents": "fas fa-chevron-circle-right",
+    "default_icon_children": "fas fa-circle",
+    "related_modal_active": True,
+    "use_google_fonts_cdn": True,
+    "show_ui_builder": False,
+    "changeform_format": "horizontal_tabs",
+    "language_chooser": False,
+}
+
+JAZZMIN_UI_TWEAKS = {
+    "navbar_small_text": False,
+    "body_small_text": False,
+    "brand_colour": "navbar-primary",
+    "accent": "accent-primary",
+    "navbar": "navbar-dark",
+    "navbar_fixed": True,
+    "sidebar_fixed": True,
+    "sidebar": "sidebar-dark-primary",
+    "sidebar_nav_child_indent": True,
+    "sidebar_nav_compact_style": True,
+    "theme": "flatly",
+    "button_classes": {
+        "primary": "btn-primary",
+        "secondary": "btn-secondary",
+        "info": "btn-outline-info",
+        "warning": "btn-warning",
+        "danger": "btn-danger",
+        "success": "btn-success",
+    },
+}
 
 # --- Production hardening (active when DEBUG is off) ----------------------
 if not DEBUG:
