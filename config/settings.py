@@ -1,9 +1,5 @@
 """
 Django settings for the CloudERP CRM WMS Platform.
-
-Configuration is driven by environment variables so the same image can run
-locally, in Docker, and on AWS (EC2 + RDS) without code changes. No secrets
-are hard-coded — see .env.example for the full list.
 """
 from pathlib import Path
 import os
@@ -20,7 +16,7 @@ def env_bool(key: str, default: str = "False") -> bool:
 # --- Security -------------------------------------------------------------
 SECRET_KEY = os.getenv("DJANGO_SECRET_KEY", "dev-insecure-change-me")
 DEBUG = env_bool("DJANGO_DEBUG", "True")
-ALLOWED_HOSTS = [h.strip() for h in os.getenv("DJANGO_ALLOWED_HOSTS", "localhost,127.0.0.1").split(",") if h.strip()]
+ALLOWED_HOSTS = ["13.60.64.252", "localhost", "127.0.0.1"]
 CSRF_TRUSTED_ORIGINS = [o.strip() for o in os.getenv("DJANGO_CSRF_TRUSTED_ORIGINS", "").split(",") if o.strip()]
 
 # --- Applications ---------------------------------------------------------
@@ -32,10 +28,8 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    # Third party
     "rest_framework",
     "django_filters",
-    # Local apps
     "core",
     "accounts",
     "crm",
@@ -78,8 +72,6 @@ TEMPLATES = [
 WSGI_APPLICATION = "config.wsgi.application"
 
 # --- Database -------------------------------------------------------------
-# Uses PostgreSQL when DB_ENGINE points at it (Docker / AWS RDS); falls back to
-# SQLite for quick local runs so the project always boots out of the box.
 if os.getenv("POSTGRES_DB"):
     DATABASES = {
         "default": {
@@ -142,14 +134,12 @@ STATIC_ROOT = BASE_DIR / "staticfiles"
 STATICFILES_DIRS = [BASE_DIR / "static"]
 STORAGES = {
     "default": {"BACKEND": "django.core.files.storage.FileSystemStorage"},
-    # CompressedStaticFilesStorage: serves gzip/brotli-compressed files without
-    # a strict manifest, avoiding MissingFileError from jazzmin's source-map refs.
     "staticfiles": {"BACKEND": "whitenoise.storage.CompressedStaticFilesStorage"},
 }
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-# --- Jazzmin (Django Admin UI) --------------------------------------------
+# --- Jazzmin --------------------------------------------------------------
 JAZZMIN_SETTINGS = {
     "site_title": "CloudERP Admin",
     "site_header": "CloudERP",
@@ -221,7 +211,7 @@ JAZZMIN_UI_TWEAKS = {
     },
 }
 
-# --- Production hardening (active when DEBUG is off) ----------------------
+# --- Production hardening -------------------------------------------------
 if not DEBUG:
     SECURE_SSL_REDIRECT = env_bool("DJANGO_SECURE_SSL_REDIRECT", "False")
     SESSION_COOKIE_SECURE = True
